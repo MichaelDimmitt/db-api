@@ -1,0 +1,28 @@
+{
+  "name": "db-api",
+  "version": "1.0.0",
+  "description": "postgres express api hosted on aws Ec2",
+  "main": "index.js",
+  "scripts": {
+    "start": "node express.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaeldimmitt/db-api.git"
+  },
+  "keywords": [
+    "api",
+    "express"
+  ],
+  "author": "michaeldimmitt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaeldimmitt/db-api/issues"
+  },
+  "homepage": "https://github.com/michaeldimmitt/db-api#readme",
+  "dependencies": {
+    "express": "^4.17.0",
+    "pg": "^7.11.0"
+  }
+}
