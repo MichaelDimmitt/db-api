@@ -1,12 +1,8 @@
 let app = require('express').Router();
-const { Client } = require('pg')
-const client = new Client({
-  user: 'michaeldimmitt',
-  host: 'mydbinstance.cgt7rgzokonn.us-east-2.rds.amazonaws.com',
-  database: 'project1',
-  password: 'ishnepow',
-  port: 5432,
-})
+const { config } = require('../config.js');
+
+const { Client } = require('pg');
+const client = new Client(config);
 
 app.get('/users', async function(req, res){
   try{
