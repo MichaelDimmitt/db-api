@@ -1,9 +1,10 @@
 export const config =  {
+  host: 'localhost',
   user: 'database-user',
-  host: 'my.database-server.com',
   database: 'databaase-name',
   password: 'secretpassword!!',
   port: 5432,
 }
 
 module.exports = { config }
+// host: 'my.database-server.com',

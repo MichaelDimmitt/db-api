@@ -12,3 +12,22 @@ npm start;
 ```bash
 cp .example.config.js config.js
 ```
+
+## Relavent psql commands:
+```psql
+CREATE database project1;
+\c project1;
+
+DELETE from users;
+
+CREATE TABLE users(
+firstName text,
+lastName text,
+npiNumber text,
+businessAddress text,
+telephoneNumber text,
+emailAddress text
+);
+
+INSERT INTO users VALUES ('michael', 'dimmitt', '82138','2312 baymeadows way, jacksonville, fl','9022006567','michaelgdimmitt@gmail.com');
+```
