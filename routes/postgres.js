@@ -1,8 +1,7 @@
 let app = require('express').Router();
 const { Client } = require('pg')
 const { config } = require('../config.js')
-app.post('/users', async function(req, res){
-  console.log({info: req.body})
+app.get('/users', async function(req, res){
   try{
   const client = new Client(config)
 
@@ -20,15 +19,10 @@ app.post('/users', async function(req, res){
 })
 
 
-app.get('/insert', async function(req, res){
+app.post('/insert', async function(req, res){
+  const params=req.body
   try{
   const client = new Client(config)
-
-  const params = {
-    firstName: 'michael', lastName: 'dimmitt', npiNumber: '82138', businessAddress: '2312 baymeadows way, jacksonville, fl',
-    telephoneNumber: '9022006567', emailAddress: 'michaelgdimmitt@gmail.com'
-  };
-
   await client.connect()
 //  const body2 = await client.query(`INSERT INTO users VALUES ('${params.firstName}', 'dimmitt', '82138','2312 baymeadows way, jacksonville, fl','9022006567','michaelgdimmitt@gmail.com');`)
   const body2 = await client.query(`INSERT INTO users VALUES ( '${params.firstName}', '${params.lastName}', '${params.npiNumber}', '${params.businessAddress}', '${params.telephoneNumber}', '${params.emailAddress}' )`);
