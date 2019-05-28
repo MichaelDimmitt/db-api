@@ -2,6 +2,7 @@ const express = require('express')
 const port = 6789
 
 let { postgresRoutes } = require('./routes/postgres.js');
+let { mongoRoutes } = require('./routes/mongo.js');
 
 let app = express();
 
@@ -12,7 +13,6 @@ app.use(function(req, res, next) {
   next();
 })
 
-
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
@@ -22,5 +22,6 @@ app.get('/', function(req, res){
   res.redirect('/postgres/users');
 })
 app.use('/postgres', postgresRoutes);
+app.use('/mongo', mongoRoutes);
 
 module.exports = app

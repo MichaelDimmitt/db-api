@@ -23,6 +23,7 @@
   "homepage": "https://github.com/michaeldimmitt/db-api#readme",
   "dependencies": {
     "express": "^4.17.0",
+    "mongodb": "^2.2.33",
     "pg": "^7.11.0"
   }
 }

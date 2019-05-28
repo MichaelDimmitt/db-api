@@ -31,3 +31,9 @@ emailAddress text
 
 INSERT INTO users VALUES ('michael', 'dimmitt', '82138','2312 baymeadows way, jacksonville, fl','9022006567','michaelgdimmitt@gmail.com');
 ```
+
+## Relavent mongo commands:
+use project1
+db.createCollection("users")
+
+
