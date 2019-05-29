@@ -50,3 +50,6 @@ https://medium.com/@rksmith369/how-to-deploy-mern-stack-app-on-aws-ec2-with-ssl-
 cd /var/www
 pm2 start express.js
 ```
+
+## Ec2 instance accessable at: 
+http://3.19.120.4
