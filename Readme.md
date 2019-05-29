@@ -33,13 +33,17 @@ INSERT INTO users VALUES ('michael', 'dimmitt', '82138','2312 baymeadows way, ja
 ```
 
 ## Relavent mongo commands:
+```
 use project1
 db.createCollection("users")
+```
 
 
 ## Deploy express with mongo to Ec2:
 https://www.youtube.com/watch?v=fIeIzHMC4BQ
 https://medium.com/@rksmith369/how-to-deploy-mern-stack-app-on-aws-ec2-with-ssl-nginx-the-right-way-e76c1a8cd6c6
 
+```bash
 cd /var/www
 pm2 start express.js
+```
