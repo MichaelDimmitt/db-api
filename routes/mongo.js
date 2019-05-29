@@ -15,10 +15,10 @@ app.get('/users', function(req,res){
 })
 
 app.post('/insert', function(req,res){
-  const { firstName, lastName, npiNumber, businessAddress, telephoneNumber, emailAddress } = req.body
+  const { firstName, lastName, npiNumber, businessAddress, telephoneNumber, email } = req.body
   MongoClient.connect("mongodb://localhost:27017/project1", function(err, db) {
     console.log('connected successfully to server')
-    db.collection('users').insert({ firstName, lastName, npiNumber, businessAddress, telephoneNumber, emailAddress })
+    db.collection('users').insert({ firstName, lastName, npiNumber, businessAddress, telephoneNumber, email })
     db.collection('users').aggregate([ ]).toArray()
       .then(result => {
         db.close();
