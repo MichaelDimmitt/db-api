@@ -19,9 +19,9 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 console.log('app listening on port ' + port)
 
 app.get('/', function(req, res){
-  res.redirect('/postgres/users');
+  // res.redirect('/postgres/users');
+  res.redirect('/mongo/users');
 })
-app.use('/postgres', postgresRoutes);
 app.use('/mongo', mongoRoutes);
 
 module.exports = app
