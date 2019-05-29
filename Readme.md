@@ -1,4 +1,7 @@
+## db-api (express, accessing a mongo database on an ec2 instance)
+<!--
 ## db-api (setup for a postgres db on aws RDS
+-->
 
 ## Setup Information
 ```bash
