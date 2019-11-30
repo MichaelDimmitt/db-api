@@ -1,9 +1,6 @@
 const express = require('express')
 const port = 6789
 
-let { postgresRoutes } = require('./routes/postgres.js');
-let { mongoRoutes } = require('./routes/mongo.js');
-
 let app = express();
 
 app.listen(port)
@@ -19,9 +16,7 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 console.log('app listening on port ' + port)
 
 app.get('/', function(req, res){
-  // res.redirect('/postgres/users');
-  res.redirect('/mongo/users');
+  res.sendFile('index.html');
 })
-app.use('/mongo', mongoRoutes);
 
 module.exports = app
