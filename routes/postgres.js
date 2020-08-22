@@ -1,6 +1,7 @@
 let app = require('express').Router();
 const { Client } = require('pg')
 const { config } = require('../config.js')
+const fetch = require('node-fetch');
 app.get('/users', async function(req, res){
   try{
   const client = new Client(config)
@@ -37,6 +38,25 @@ app.post('/insert', async function(req, res){
     res.status(501).json('hi')
   }
 })
+
+app.get('/insertRepos', async function(req, res){
+  const repos = await fetch(`https://api.github.com/users/michaeldimmitt/repos`)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(repos) {
+        const trimmedData = repos.map( repo => {
+          return {
+            repo: repo.name,
+            userName: repo.owner.login,
+            starCount: repo.stargazers_count,
+            majorityLanguage: repo.language,
+            languageColor: "#89e051",
+            description: repo.description
+          }
+        })
+        console.log({trimmedData})
+      })
 
 // `CREATE TABLE users( ${params.firstName} text, ${params.lastName} text, ${params.npiNumber} text, ${params.businessAddress} text, ${params.telephoneNumber} text, ${params.emailAddress} text )`
 
