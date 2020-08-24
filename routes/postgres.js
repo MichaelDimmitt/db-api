@@ -45,18 +45,23 @@ app.get('/insertRepos', async function(req, res){
         return response.json();
       })
       .then(function(repos) {
+        let reallyLargeString = 'INSERT INTO users VALUES'
         const trimmedData = repos.map( repo => {
-          return {
+
+        const newRepo = {
             repo: repo.name,
             userName: repo.owner.login,
             starCount: repo.stargazers_count,
             majorityLanguage: repo.language,
             languageColor: "#89e051",
-            description: repo.description
+            description: repo.description === null ? '' : repo.description
           }
+        reallyLargeString = `${reallyLargeString} ( '${newRepo.repo}', '${newRepo.userName}', '${newRepo.starCount}', '${newRepo.majorityLanguage}', '${newRepo.languageColor}', '${newRepo.description}', )`;
+        return newRepo
         })
-        console.log({trimmedData})
+        console.log({trimmedData, reallyLargeString})
       })
+})
 
 // `CREATE TABLE users( ${params.firstName} text, ${params.lastName} text, ${params.npiNumber} text, ${params.businessAddress} text, ${params.telephoneNumber} text, ${params.emailAddress} text )`
 
