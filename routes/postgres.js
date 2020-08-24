@@ -1,5 +1,8 @@
 let app = require('express').Router();
-const { Client } = require('pg')
+let pg = require('pg')
+require('pg-essential').patch(pg);
+
+const { Client } = pg
 const { config } = require('../config.js')
 const fetch = require('node-fetch');
 app.get('/users', async function(req, res){
@@ -40,27 +43,49 @@ app.post('/insert', async function(req, res){
 })
 
 app.get('/insertRepos', async function(req, res){
-  const repos = await fetch(`https://api.github.com/users/michaeldimmitt/repos`)
+  try{
+  const client = new Client(config)
+  await client.connect()
+  const repos = await fetch(`https://api.github.com/users/michaeldimmitt/repos?per_page=100&page=2`)
       .then(function(response) {
         return response.json();
       })
-      .then(function(repos) {
+      .then(async function(repos) {
+        try {
         let reallyLargeString = 'INSERT INTO users VALUES'
         const trimmedData = repos.map( repo => {
 
         const newRepo = {
             repo: repo.name,
-            userName: repo.owner.login,
-            starCount: repo.stargazers_count,
-            majorityLanguage: repo.language,
-            languageColor: "#89e051",
+            username: repo.owner.login,
+            starcount: repo.stargazers_count,
+            majoritylanguage: repo.language,
+            languagecolor: "#89e051",
             description: repo.description === null ? '' : repo.description
           }
         reallyLargeString = `${reallyLargeString} ( '${newRepo.repo}', '${newRepo.userName}', '${newRepo.starCount}', '${newRepo.majorityLanguage}', '${newRepo.languageColor}', '${newRepo.description}', )`;
         return newRepo
         })
-        console.log({trimmedData, reallyLargeString})
+        const keyValues =Object.keys(trimmedData[0])
+        console.log({trimmedData, reallyLargeString, keyValues})
+
+        await client.executeBulkInsertion(trimmedData,keyValues,'repos');
+        res.status(200).json('done')
+        }
+        catch(err) {
+          console.log({err})
+          client.end()
+          res.status(501).json('hi')
+        }
       })
+      // psql -d project1 -c "SELECT *  FROM repos"
+      // psql -d project1 -c "DELETE from repos;"
+  }
+  catch(err) {
+    console.log({err})
+    client.end()
+    res.status(501).json('hi')
+  }
 })
 
 // `CREATE TABLE users( ${params.firstName} text, ${params.lastName} text, ${params.npiNumber} text, ${params.businessAddress} text, ${params.telephoneNumber} text, ${params.emailAddress} text )`
