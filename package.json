@@ -4,7 +4,7 @@
   "description": "postgres express api hosted on aws Ec2",
   "main": "index.js",
   "scripts": {
-    "start": "node express.js",
+    "start": "nodemon express.js",
     "test": "test"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "express": "^4.17.0",
     "mongodb": "^2.2.33",
     "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.4",
     "pg": "^7.11.0",
     "pg-essential": "^1.0.2"
   }
