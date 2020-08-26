@@ -5,6 +5,15 @@ require('pg-essential').patch(pg);
 const { Client } = pg
 const { config } = require('../config.js')
 const fetch = require('node-fetch');
+
+const errorMessage = (err, client) => {
+  msg = 'error' + err  
+  console.log({err})
+  client.end()
+  res.status(501).json('hi')
+}
+let msg = ''
+
 app.get('/users', async function(req, res){
   try{
   const client = new Client(config)
@@ -16,9 +25,7 @@ app.get('/users', async function(req, res){
   res.status(200).json(body.rows)
   }
   catch(err) {
-    console.log({err})
-    client.end()
-    res.status(501).json('hi')
+    errorMessage(err, client)
   }
 })
 
@@ -36,54 +43,88 @@ app.post('/insert', async function(req, res){
   res.status(200).json(body.rows)
   }
   catch(err) {
-    console.log({err})
-    client.end()
-    res.status(501).json('hi')
+    errorMessage(err, client)
   }
 })
 
 app.get('/insertRepos', async function(req, res){
+  const client = new Client(config)
   try{
-    const client = new Client(config)
+    
     
     await client.connect()
+    const prefix = 'users'
+    const userName = 'michaeldimmitt'// 'sindresorhus'
+    const startingIndex = 0
     
-    const repos = await fetch(`https://api.github.com/users/michaeldimmitt/repos?per_page=100&page=2`)
-        .then(function(response) {
-          return response.json();
-        })
-    let msg = ''
-    let reallyLargeString = 'INSERT INTO users VALUES'
-    if(repos.length > 0){
-      const trimmedData = repos.map( repo => {
-        const newRepo = {
-            repo: repo.name,
-            username: repo.owner.login,
-            starcount: repo.stargazers_count,
-            majoritylanguage: repo.language,
-            languagecolor: "#89e051",
-            description: repo.description === null ? '' : repo.description
-          }
-        
-        // reallyLargeString = `${reallyLargeString} ( '${newRepo.repo}', '${newRepo.userName}', '${newRepo.starCount}', '${newRepo.majorityLanguage}', '${newRepo.languageColor}', '${newRepo.description}', )`;
-        return newRepo
-      })
-      const keyValues = Object.keys(trimmedData[0])
-      console.log({trimmedData, reallyLargeString, keyValues})
-
-      await client.executeBulkInsertion(trimmedData,keyValues,'repos');
-      msg = 'done'
+    const fetchRepo = (prefix, userName, startingIndex, increment) => fetch(`https://api.github.com/${prefix}/${userName}/repos?per_page=100&page=${startingIndex + increment}`).then(x => x.json())
+    const reposRequest1 = fetchRepo(prefix, userName, startingIndex, 1)
+    const reposRequest2 = fetchRepo(prefix, userName, startingIndex, 2)
+    const reposRequest3 = fetchRepo(prefix, userName, startingIndex, 3)
+    const reposRequest4 = fetchRepo(prefix, userName, startingIndex, 4)
+    const reposRequest5 = fetchRepo(prefix, userName, startingIndex, 5)
+    
+    const shrinkRepo = (repo) => {
+      const trimmedRepo = {
+        repo: repo.name,
+        username: repo.owner.login,
+        starcount: repo.stargazers_count,
+        majoritylanguage: repo.language,
+        languagecolor: "#89e051",
+        description: repo.description === null ? '' : repo.description
+      }
+    
+      return trimmedRepo
     }
-    else { msg = 'done, no insertion added' }
+    getRepoData = async (repos, client) => {
+      if(repos.length > 0) {
+        const trimmedData = repos.map( repo => 
+          shrinkRepo(repo) 
+        )
+        const keyValues = Object.keys(trimmedData[0])
+        
+        try { await client.executeBulkInsertion(trimmedData,keyValues,'repos'); }
+        catch(err) { errorMessage(err, client) }
+        msg = 'done'
+      }
+      else { msg = 'done, no insertion added' }
+      return msg
+    }
+    const listOfRepos = await Promise.all([reposRequest1, reposRequest2, reposRequest3, reposRequest4, reposRequest5])
+    const [repos1, repos2, repos3, repos4, repos5] = listOfRepos
+    const messageArray = await listOfRepos.map(async repos => {
+      await getRepoData(repos, client)
+    })
+    
+    console.log('reached the end', repos1, repos1.length, repos2.length, repos3.length, repos4.length, repos5.length) 
+    // .then(async (listOfRepos) => {
+    //   console.log({listOfRepos})
+    //   const [repos1, repos2, repos3, repos4, repos5] = listOfRepos
+    //   const messageArray = await listOfRepos.map(async repos => {
+    //     await getRepoData(repos, client)
+    //   })
+
+    //   if(!repos1.length || !repos2.length || !repos3.length || !repos4.length || !repos5.length)
+    //   {
+    //     console.log('reached the end', repos1.length, repos2.length, repos3.length, repos4.length, repos5.length)
+    //   }
+    //   return messageArray
+    // })
+    // console.log({listOfRepos})
+
+    
+    // console.log({messageArray})
+    // {
+    //   recurse()
+    // }
+    
     res.status(200).json(msg)
     // psql -d project1 -c "SELECT *  FROM repos"
     // psql -d project1 -c "DELETE from repos;"
   }
    
   catch(err) {
-    console.log({err})
-    client.end()
-    res.status(501).json('hi')
+    errorMessage(err, client)
   }
 })
 
